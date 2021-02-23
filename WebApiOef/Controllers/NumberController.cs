@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System;
-using System.IO;
+using System.Collections.Generic;
+using IO = System.IO;
 
 namespace WebApiOef.Controllers
 {
@@ -11,18 +12,21 @@ namespace WebApiOef.Controllers
     {
         string file = @"C:\users\annel\getal.txt";
 
-        public NumberController()
-        {
-
-        }
-
         [HttpGet]
         public ActionResult<string> GetNumber()
         {
-            if (File.Exists(file))
+            List<int> numbers = new List<int>();
+            if (IO.File.Exists(file))
             {
-                string[] lines = System.IO.File.ReadAllLines(file);
-                return Ok(lines);
+                string[] lines = IO.File.ReadAllLines(file);
+                foreach (string line in lines)
+                {
+                    if (Int32.TryParse(line, out int number))
+                    {
+                        numbers.Add(number);
+                    }
+                }
+                return Ok(numbers);
             }
             return NotFound();
         }
@@ -31,9 +35,9 @@ namespace WebApiOef.Controllers
         public ActionResult SaveNumber(int number)
         {
             string text = Convert.ToString(number);
-            if (System.IO.File.Exists(file))
+            if (IO.File.Exists(file))
             {
-                System.IO.File.WriteAllText(file, text);
+                IO.File.WriteAllText(file, text);
                 return Ok();
             }
             return NotFound();
@@ -44,9 +48,9 @@ namespace WebApiOef.Controllers
         {
             Random randomGenerator = new Random();
             string number = Convert.ToString(randomGenerator.Next(1, 10));
-            if (System.IO.File.Exists(file))
+            if (IO.File.Exists(file))
             {
-                System.IO.File.WriteAllText(file, number);
+                IO.File.WriteAllText(file, number);
                 return Ok();
             }
             return NotFound();
