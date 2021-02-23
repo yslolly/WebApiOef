@@ -13,7 +13,7 @@ namespace WebApiOef.Controllers
         string file = @"C:\users\annel\getal.txt";
 
         [HttpGet]
-        public ActionResult<string> GetNumber()
+        public ActionResult<int> GetNumber()
         {
             List<int> numbers = new List<int>();
             if (IO.File.Exists(file))
@@ -26,34 +26,26 @@ namespace WebApiOef.Controllers
                         numbers.Add(number);
                     }
                 }
-                return Ok(numbers);
+                return Ok(numbers[0]); // eerste getal teruggeven
             }
             return NotFound();
         }
 
         [HttpPost("number")]
-        public ActionResult SaveNumber(int number)
+        public ActionResult SaveNumber(int number) // bij wegschrijven geen if File.Exists nodig
         {
             string text = Convert.ToString(number);
-            if (IO.File.Exists(file))
-            {
-                IO.File.WriteAllText(file, text);
-                return Ok();
-            }
-            return NotFound();
+            IO.File.WriteAllText(file, text);
+            return Ok();
         }
         
         [HttpPost("random number")]
-        public ActionResult SaveRandomNumber()
+        public ActionResult SaveRandomNumber() // bij wegschrijven geen if File.Exists nodig
         {
             Random randomGenerator = new Random();
             string number = Convert.ToString(randomGenerator.Next(1, 10));
-            if (IO.File.Exists(file))
-            {
-                IO.File.WriteAllText(file, number);
-                return Ok();
-            }
-            return NotFound();
+            IO.File.WriteAllText(file, number);
+            return Ok();
         }
     }
 }

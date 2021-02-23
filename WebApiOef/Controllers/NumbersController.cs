@@ -15,7 +15,7 @@ namespace WebApiOef.Controllers
         string file = @"C:\users\annel\getallen.txt";
 
         [HttpGet]
-        public ActionResult<int> GetNumber()
+        public ActionResult<List<int>> GetNumber()
         {
             List<int> numbers = new List<int>();
             if (IO.File.Exists(file))
@@ -46,27 +46,47 @@ namespace WebApiOef.Controllers
             return NotFound();
         }
 
-        [HttpDelete]
-        public ActionResult<List<int>> DeleteNumber()
+        [HttpDelete("delete first number")]
+        public ActionResult DeleteNumber() // geen return type nodig want laatste lijn = return Ok();
         {
             string[] lines = IO.File.ReadAllLines(file);
 
             List<string> linesList = lines.ToList();
             linesList.Remove(linesList[0]);
-            //lines = linesList.ToArray();
-
-            //List<int> numbers = new List<int>();
-            //foreach (string line in lines)
-            //{
-            //    if (Int32.TryParse(line, out int number))
-            //    {
-            //        numbers.Add(number);
-            //    }
-            //}
-            //numbers.Remove(numbers[0]);
             
             IO.File.WriteAllLines(file, linesList);
-            return Ok();
+            return Ok(); 
+        }
+
+        [HttpPut]
+        public ActionResult<List<int>> ReplaceNumber(int a, int b)
+        {
+            string[] lines = IO.File.ReadAllLines(file);
+            List<int> numbers = new List<int>();
+
+            foreach (string line in lines)
+            {
+                if (Int32.TryParse(line, out int number))
+                {
+                    numbers.Add(number);
+                }
+            }
+            numbers[a] = b;
+            return Ok(numbers);
+        }
+
+        [HttpDelete("delete on specific index")]
+        public ActionResult DeleteSpecific(int index)
+        {
+            string[] lines = IO.File.ReadAllLines(file);
+            List<string> linesList = lines.ToList();
+            if (index < linesList.Count && index >= 0)
+            {
+                linesList.Remove(linesList[index]);
+                IO.File.WriteAllLines(file, linesList);
+                return Ok();
+            }
+            return BadRequest();
         }
     }
 }
