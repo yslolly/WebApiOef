@@ -59,24 +59,18 @@ namespace WebApiOef.Controllers
         }
 
         [HttpPut]
-        public ActionResult<List<int>> ReplaceNumber(int a, int b)
+        public ActionResult ReplaceNumber(int index, int newNumber) // return type nodig want laatste lijn = return Ok(lijst van integers);
         {
             string[] lines = IO.File.ReadAllLines(file);
-            List<int> numbers = new List<int>();
+            List<string> numbers = lines.ToList();
 
-            foreach (string line in lines)
-            {
-                if (Int32.TryParse(line, out int number))
-                {
-                    numbers.Add(number);
-                }
-            }
-            numbers[a] = b;
-            return Ok(numbers);
+            numbers[index] = Convert.ToString(newNumber);
+            IO.File.WriteAllLines(file, numbers);
+            return Ok();
         }
 
         [HttpDelete("delete on specific index")]
-        public ActionResult DeleteSpecific(int index)
+        public ActionResult DeleteSpecific(int index) // try catch OutOfRange
         {
             string[] lines = IO.File.ReadAllLines(file);
             List<string> linesList = lines.ToList();
